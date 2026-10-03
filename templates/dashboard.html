@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <h2>Job Tracker 🎯</h2>
+  <p>Logged in as: {{ email }} | <a href="/logout">Logout</a></p>
+
+  <h3>Add a Job</h3>
+  <form method="POST" action="/add_job">
+    <input type="text" name="company" placeholder="Company" required>
+    <input type="text" name="role" placeholder="Role" required>
+    <select name="status">
+      <option>Applied</option>
+      <option>Interview</option>
+      <option>Offer</option>
+      <option>Rejected</option>
+    </select>
+    <button type="submit">Add</button>
+  </form>
+
+  <h3>My Applications</h3>
+  <table cellpadding="8">
+    <tr>
+      <th>Company</th>
+      <th>Role</th>
+      <th>Status</th>
+      <th>Action</th>
+    </tr>
+    {% for job in jobs %}
+    <tr>
+      <td>{{ job["company"] }}</td>
+      <td>{{ job["role"] }}</td>
+      <td>
+        <form method="POST" action="/update_job/{{ job['id'] }}">
+          <select name="status" onchange="this.form.submit()">
+            {% for s in ["Applied", "Interview", "Offer", "Rejected"] %}
+            <option value="{{ s }}" {% if job["status"] == s %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+          </select>
+        </form>
+      </td>
+      <td>
+        <form method="POST" action="/delete_job/{{ job['id'] }}">
+          <button type="submit">Delete</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+</body>
+</html>
